@@ -2,14 +2,16 @@ package ru.typik.dc.accountService.operations;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 public class TransferOperation {
 
-    private final @NonNull String accountFrom;
-    private final @NonNull String accountTo;
-    private final @NonNull BigDecimal amount;
+    private final @NotEmpty String accountFrom;
+    private final @NotEmpty String accountTo;
+    private final @DecimalMin("0") BigDecimal amount;
 
 }

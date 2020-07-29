@@ -1,6 +1,11 @@
 package ru.typik.dc.accountService.controllers.exceptions.handlers;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +30,14 @@ public class ControllerExceptionHandler {
     public String overdraftHandler(OverdraftException exception) {
         return String.format("Overdraft for account %s and amount %s", exception.getAccount().getAccountId(),
                 exception.getAmount().toString());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> illegalArgumentHandler(MethodArgumentNotValidException exception) {
+        return exception.getBindingResult().getAllErrors().stream().map(el -> ((FieldError) el))
+                .collect(Collectors.toMap(el -> el.getField(), el -> el.getDefaultMessage()));
     }
 
 }

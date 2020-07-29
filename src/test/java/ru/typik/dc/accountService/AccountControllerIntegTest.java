@@ -46,6 +46,36 @@ public class AccountControllerIntegTest {
     private TestRestTemplate restTemplate;
 
     @Test
+    public void testInvalidArguments() {
+        assertEquals(HttpStatus.BAD_REQUEST,
+                this.restTemplate
+                        .postForEntity(getUrl("putMoney"), new PutOperation("7", BigDecimal.TEN.negate()), String.class)
+                        .getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, this.restTemplate
+                .postForEntity(getUrl("putMoney"), new PutOperation("", BigDecimal.TEN), String.class).getStatusCode());
+
+        assertEquals(HttpStatus.BAD_REQUEST, this.restTemplate
+                .postForEntity(getUrl("takeMoney"), new TakeOperation("7", BigDecimal.TEN.negate()), String.class)
+                .getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST,
+                this.restTemplate
+                        .postForEntity(getUrl("takeMoney"), new TakeOperation("", BigDecimal.TEN), String.class)
+                        .getStatusCode());
+
+        assertEquals(HttpStatus.BAD_REQUEST,
+                this.restTemplate
+                        .postForEntity(getUrl("transferMoney"),
+                                new TransferOperation("1", "2", BigDecimal.TEN.negate()), String.class)
+                        .getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, this.restTemplate
+                .postForEntity(getUrl("transferMoney"), new TransferOperation("", "2", BigDecimal.TEN), String.class)
+                .getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, this.restTemplate
+                .postForEntity(getUrl("transferMoney"), new TransferOperation("1", "", BigDecimal.TEN), String.class)
+                .getStatusCode());
+    }
+
+    @Test
     public void testPutMoneyAccountNotFound() {
         ResponseEntity<String> result = this.restTemplate.postForEntity(getUrl("putMoney"),
                 new PutOperation("6", BigDecimal.TEN), String.class);

@@ -1,5 +1,7 @@
 package ru.typik.dc.accountService.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,7 @@ public class AccountController {
     AccountDao accountDao;
 
     @PostMapping("/transferMoney")
-    public TransferOperation transferMoney(@RequestBody TransferOperation transfer) {
+    public TransferOperation transferMoney(@Valid @RequestBody TransferOperation transfer) {
         Account accountFrom = this.accountDao.findById(transfer.getAccountFrom())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getAccountFrom()));
         accountFrom.setBalance(accountFrom.getBalance().subtract(transfer.getAmount()));
@@ -43,7 +45,7 @@ public class AccountController {
     }
 
     @PostMapping("/putMoney")
-    public PutOperation putMoney(@RequestBody PutOperation putOperation) {
+    public PutOperation putMoney(@Valid @RequestBody PutOperation putOperation) {
         Account account = this.accountDao.findById(putOperation.getAccount())
                 .orElseThrow(() -> new AccountNotFoundException(putOperation.getAccount()));
         account.setBalance(account.getBalance().add(putOperation.getAmount()));
@@ -52,7 +54,7 @@ public class AccountController {
     }
 
     @PostMapping("/takeMoney")
-    public TakeOperation takeMoney(@RequestBody TakeOperation takeOperation) {
+    public TakeOperation takeMoney(@Valid @RequestBody TakeOperation takeOperation) {
         Account account = this.accountDao.findById(takeOperation.getAccount())
                 .orElseThrow(() -> new AccountNotFoundException(takeOperation.getAccount()));
         account.setBalance(account.getBalance().subtract(takeOperation.getAmount()));
